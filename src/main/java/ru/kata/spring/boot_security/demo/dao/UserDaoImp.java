@@ -1,7 +1,7 @@
-package ru.kata.spring.boot_security.demo.DAO;
+package ru.kata.spring.boot_security.demo.dao;
 
 import org.springframework.stereotype.Repository;
-import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.models.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -9,7 +9,7 @@ import javax.persistence.Query;
 import java.util.List;
 
 @Repository
-public class UserDAOImpl implements UserDAO{
+public class UserDaoImp implements UserDao {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -20,7 +20,7 @@ public class UserDAOImpl implements UserDAO{
     }
 
     @Override
-    public void deleteUserById(long id) {
+    public void deleteUserById(int id) {
         entityManager.remove(getUserById(id));
     }
 
@@ -30,7 +30,7 @@ public class UserDAOImpl implements UserDAO{
     }
 
     @Override
-    public User getUserById(long id) {
+    public User getUserById(int id) {
         return entityManager.find(User.class, id);
     }
 
@@ -42,14 +42,7 @@ public class UserDAOImpl implements UserDAO{
     }
 
     @Override
-    public User getUserByEmail(String email) {
-        Query query = entityManager.createQuery("select user from User user join fetch user.roles where user.email = :email", User.class);
-        query.setParameter("email", email);
-        return (User) query.getSingleResult();
-    }
-
-    @Override
-    public List<User> getAllUsers() {
+    public List<User> getListOfUsers() {
         return entityManager.createQuery("select user from User user", User.class).getResultList();
     }
 }

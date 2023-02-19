@@ -1,25 +1,21 @@
-package ru.kata.spring.boot_security.demo.controller;
-
+package ru.kata.spring.boot_security.demo.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ru.kata.spring.boot_security.demo.model.Role;
-import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.models.Role;
+import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
-
     private UserService userService;
     private RoleService roleService;
-
 
     public AdminController(UserService userService, RoleService roleService) {
         this.userService = userService;
@@ -27,16 +23,20 @@ public class AdminController {
     }
 
     @GetMapping
-    public String getAdminPage(Model model, Principal principal, User user) {
-        model.addAttribute("user", userService.getUserByUsername(principal.getName()));
-        model.addAttribute("users", userService.getAllUsers());
-        model.addAttribute("listRoles", roleService.getAllRoles());
-        model.addAttribute("newUser", new User());
-        return "adminPage";
+    public String getAdminPage(Model model) {
+        model.addAttribute("users", userService.getListOfUsers());
+        return "admin/adminPage";
+    }
+
+    @GetMapping("/createUser")
+    public String addUser(Model model) {
+        model.addAttribute("user", new User());
+        model.addAttribute("listRoles", roleService.getListOfRoles());
+        return "admin/newUser";
     }
 
     @PostMapping("/createNewUser")
-    public String createUser(@ModelAttribute("newUser") User user) {
+    public String createUser(@ModelAttribute("user") User user) {
         List<Role> listRoles = new ArrayList<>();
         for (Role role : user.getRoles()) {
             listRoles.add(roleService.getRoleByName(role.getName()));
@@ -46,8 +46,16 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    @PatchMapping("/editUser")
-    public String updateUser(User user) {
+    @GetMapping("/{id}")
+    public String editUser(@PathVariable("id") int id, Model model) {
+        model.addAttribute("user", userService.getUserById(id));
+        model.addAttribute("listRoles", roleService.getListOfRoles());
+        return "admin/editUser";
+    }
+
+    @PatchMapping("/editUser/{id}")
+    public String updateUser(@ModelAttribute("user") User user,
+                             @PathVariable("id") int id) {
         List<Role> listRoles = new ArrayList<>();
         for (Role role : user.getRoles()) {
             listRoles.add(roleService.getRoleByName(role.getName()));
@@ -57,11 +65,9 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    @DeleteMapping("/deleteUser/{id}")
+    @DeleteMapping("/{id}/delete")
     public String deleteUser(@PathVariable("id") int id) {
-        userService.deleteUserById(id);
+        userService.deleteUserById(userService.getUserById(id));
         return "redirect:/admin";
     }
-
-
 }

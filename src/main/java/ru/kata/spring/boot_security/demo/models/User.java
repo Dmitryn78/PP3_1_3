@@ -1,5 +1,4 @@
-package ru.kata.spring.boot_security.demo.model;
-
+package ru.kata.spring.boot_security.demo.models;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,21 +8,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private int id;
 
     @Column(unique = true)
     private String username;
 
     private String password;
-
-    private String lastname;
 
     private int age;
 
@@ -42,19 +38,18 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(String username, String password, String lastname, int age, String email, List<Role> roles) {
+    public User(String username, String password, int age, String email, List<Role> roles) {
         this.username = username;
         this.password = password;
-        this.lastname = lastname;
         this.age = age;
         this.email = email;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -103,24 +98,8 @@ public class User implements UserDetails {
         return roles;
     }
 
-    public String getStringRoles() {
-        List<String> list = roles.stream()
-                .map(r->r.toString())
-                .sorted()
-                .collect(Collectors.toList());
-        return String.join(" ", list);
-    }
-
     public void setRoles(List<Role> roles) {
         this.roles = roles;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
     }
 
     public int getAge() {
@@ -137,18 +116,5 @@ public class User implements UserDetails {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", lastname='" + lastname + '\'' +
-                ", age=" + age +
-                ", email='" + email + '\'' +
-                ", roles=" + roles +
-                '}';
     }
 }

@@ -1,7 +1,7 @@
-package ru.kata.spring.boot_security.demo.DAO;
+package ru.kata.spring.boot_security.demo.dao;
 
 import org.springframework.stereotype.Repository;
-import ru.kata.spring.boot_security.demo.model.Role;
+import ru.kata.spring.boot_security.demo.models.Role;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -9,8 +9,7 @@ import javax.persistence.Query;
 import java.util.List;
 
 @Repository
-public class RoleDAOImpl implements RoleDAO {
-
+public class RoleDaoImp implements RoleDao {
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -22,7 +21,7 @@ public class RoleDAOImpl implements RoleDAO {
     }
 
     @Override
-    public List<Role> getAllRoles() {
+    public List<Role> getListOfRoles() {
         return entityManager.createQuery("select role from Role role", Role.class).getResultList();
     }
 }
